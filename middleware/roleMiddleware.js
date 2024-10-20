@@ -1,10 +1,11 @@
 // middleware/roleMiddleware.js
-const roleMiddleware = (...allowedRoles) => {
+const roleMiddleware = (...roles) => {
     return (req, res, next) => {
-      if (!req.user || !allowedRoles.includes(req.user.role)) {
-        return res.status(403).json({ msg: 'No tienes permisos para acceder a esta ruta' });
+      // Comprobamos si el usuario tiene uno de los roles permitidos
+      if (!roles.includes(req.user.role)) {
+        return res.status(403).json({ msg: 'Acceso denegado. No tienes los permisos necesarios.' });
       }
-      next();
+      next();  // Si el usuario tiene un rol válido, continuamos con la solicitud
     };
   };
   
