@@ -1,23 +1,20 @@
-// server.js
-require('dotenv').config(); // Cargar las variables de entorno
-
 const express = require('express');
 const connectDB = require('./config/db');
-const userRoutes = require('./routes/userRoutes');
-const authMiddleware = require('./middleware/authMiddleware');
-
+const cors = require('cors');
 const app = express();
 
 // Conectar a la base de datos
 connectDB();
 
-// Middleware para parsear los datos JSON del cuerpo de la solicitud
+// Middleware
+app.use(cors());
 app.use(express.json());
 
 // Rutas
-app.use('/api/users', userRoutes);
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
-// Puerto de la aplicación
+// Iniciar el servidor
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
