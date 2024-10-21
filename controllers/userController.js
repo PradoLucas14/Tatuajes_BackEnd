@@ -4,33 +4,45 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
 // Registrar un nuevo usuario
+// Registrar un nuevo usuario
 exports.registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
+  // Validaciones
+  if (!name || !email || !password || !role) {
+    return res.status(400).json({ msg: "Por favor ingresa todos los campos" });
+  }
+
+  if (name.length < 6) {
+    return res.status(400).json({ msg: "El nombre debe tener al menos 6 caracteres" });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ msg: "La contraseña debe tener al menos 6 caracteres" });
+  }
+
+  // Verificar si el correo ya está registrado
   try {
-    // Verificar si el usuario ya existe
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ msg: 'Usuario ya registrado' });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ msg: "El correo electrónico ya está en uso" });
     }
 
-    // Cifrar la contraseña
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Crear un nuevo usuario
-    user = new User({
+    // Crear el nuevo usuario
+    const newUser = new User({
       name,
       email,
-      password: hashedPassword,
-      role,
+      password,
+      role
     });
 
-    await user.save();
-    res.status(201).json({ msg: 'Usuario registrado exitosamente' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: 'Error al registrar el usuario' });
+    // Guardar el usuario
+    await newUser.save();
+
+    res.status(201).json({ msg: "Usuario registrado correctamente" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: "Error en el servidor" });
   }
 };
 
