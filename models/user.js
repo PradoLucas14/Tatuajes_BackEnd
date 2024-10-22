@@ -5,25 +5,38 @@ const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minlength: [6, 'El nombre debe tener al menos 6 caracteres']
+    minlength: 6,
   },
   email: {
     type: String,
     required: true,
-    unique: true,  // Evita correos duplicados
-    match: [/^\S+@\S+\.\S+$/, 'Por favor ingresa un correo válido']
+    unique: true,
   },
   password: {
     type: String,
     required: true,
-    minlength: [6, 'La contraseña debe tener al menos 6 caracteres']
+    minlength: 6,
   },
   role: {
     type: String,
+    required: true,
     enum: ['cliente', 'tatuador', 'recepcionista', 'administrador'],
-    default: 'cliente'
+    default: 'cliente',
+  },
+  claveDeAccion: {
+    type: String,
+    required: true,
   }
-}, { timestamps: true });
+});
+
+// Encriptar la clave de acción antes de guardar el usuario
+UserSchema.pre('save', async function(next) {
+  if (this.isModified('claveDeAccion')) {
+    const salt = await bcrypt.genSalt(10);
+    this.claveDeAccion = await bcrypt.hash(this.claveDeAccion, salt);
+  }
+  next();
+});
 
 // Encriptar la contraseña antes de guardarla
 UserSchema.pre('save', async function(next) {
@@ -34,7 +47,4 @@ UserSchema.pre('save', async function(next) {
   next();
 });
 
-const User = mongoose.model('User', UserSchema);
-
-module.exports = User;
-
+module.exports = mongoose.model('User', UserSchema);

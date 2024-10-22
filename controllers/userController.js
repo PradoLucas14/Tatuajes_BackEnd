@@ -4,10 +4,10 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
 exports.registerUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, claveDeAccion } = req.body;
 
   // Validaciones de campos
-  if (!name || !email || !password || !role) {
+  if (!name || !email || !password || !role || !claveDeAccion) {
     return res.status(400).json({ msg: "Por favor ingresa todos los campos" });
   }
 
@@ -31,10 +31,11 @@ exports.registerUser = async (req, res) => {
       name,
       email,
       password,
-      role
+      role,
+      claveDeAccion, // Usamos la clave de acción proporcionada
     });
 
-    // Guardar el usuario
+    // Guardar el usuario (la clave de acción se encriptará automáticamente en el modelo)
     await newUser.save();
 
     res.status(201).json({ msg: "Usuario registrado correctamente" });
