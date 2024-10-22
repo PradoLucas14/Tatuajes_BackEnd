@@ -3,12 +3,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
-// Registrar un nuevo usuario
-// Registrar un nuevo usuario
 exports.registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
-  // Validaciones
+  // Validaciones de campos
   if (!name || !email || !password || !role) {
     return res.status(400).json({ msg: "Por favor ingresa todos los campos" });
   }
