@@ -1,8 +1,3 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-
-// Función para iniciar sesión (login)
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -28,15 +23,13 @@ exports.loginUser = async (req, res) => {
       },
     };
 
-    // Firmar el token con la clave secreta y un tiempo de expiración
     const token = jwt.sign(payload, process.env.SECRET_KEY, {
-      expiresIn: '1h', // El token expirará en 1 hora
+      expiresIn: '1h',
     });
 
-    // Enviar el token al cliente
-    res.json({ token });
+    res.json({ token, user: { name: user.name, role: user.role } });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ msg: 'Error en el servidor' });
+    res.status(500).json({ msg: 'Error en el servidor' }); // Asegúrate de enviar un mensaje en caso de error
   }
 };
