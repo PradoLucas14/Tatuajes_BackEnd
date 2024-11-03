@@ -1,3 +1,8 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+
+// Función para iniciar sesión (login)
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
