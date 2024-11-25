@@ -38,12 +38,29 @@ const getReservs = async (req, res) => {
   }
 };
 
-// Actualizar una reservación existente
+// Actualizar solo el estado de una reservación existente
 const updateReserv = async (req, res) => {
   try {
-    const reserv = await Reserv.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    // Validar que el estado se pase en el cuerpo de la solicitud
+    if (!req.body.estado) {
+      return res.status(400).json({ error: 'El campo "estado" es requerido' });
+    }
+
+    // Buscar la reserva por su ID y actualizar solo el campo "estado"
+    const reserv = await Reserv.findByIdAndUpdate(
+      req.params.id,
+      { estado: req.body.estado },  // Solo actualiza el campo "estado"
+      { new: true }  // Devuelve la reserva actualizada
+    );
+
+    if (!reserv) {
+      return res.status(404).json({ error: 'Reserva no encontrada' });
+    }
+
+    // Devolver la reserva actualizada
     res.status(200).json(reserv);
   } catch (error) {
+    console.error('Error al actualizar la reserva:', error);
     res.status(500).json({ error: 'Error al actualizar la reservación' });
   }
 };

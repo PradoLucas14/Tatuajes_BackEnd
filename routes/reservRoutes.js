@@ -9,7 +9,7 @@ router.post('/', createReserv);
 router.get('/', getReservs);
 
 // Ruta para actualizar una reservación existente
-router.put('/:id', updateReserv);
+router.patch('/:id', updateReserv);
 
 // Ruta para eliminar una reservación
 router.delete('/:id', deleteReserv);

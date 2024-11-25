@@ -9,7 +9,7 @@ const roleMiddleware = require('../middleware/roleMiddleware');  // Esto tambié
 router.post('/register', registerUser);
 
 // Ruta para obtener todos los usuarios (solo administradores, protegida con authMiddleware y roleMiddleware)
-router.get('/', authMiddleware, roleMiddleware('administrador'), getUsers);
+router.get('/', getUsers);
 
 // Ruta para obtener un usuario por ID (todos los usuarios pueden ver su propio perfil, protegida con authMiddleware)
 router.get('/:id', authMiddleware, getUserById);
